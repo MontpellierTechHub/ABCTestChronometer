@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="fr.montpelliertechhub.abctestchronomtre.MainActivity"
+    tools:context="fr.montpelliertechhub.abctestchronometer.fr.montpelliertechhub.abctestchronometer.MainActivity"
     tools:showIn="@layout/app_bar_main2">
 
 
