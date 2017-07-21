@@ -1,4 +1,4 @@
-package fr.montpelliertechhub.abctestchronomtre
+package fr.montpelliertechhub.abctestchronometer
 
 import org.junit.Test
 

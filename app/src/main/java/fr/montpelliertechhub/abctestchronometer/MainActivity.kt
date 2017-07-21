@@ -1,6 +1,5 @@
-package fr.montpelliertechhub.abctestchronomtre
+package fr.montpelliertechhub.abctestchronometer
 
-import android.content.Context
 import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.design.widget.Snackbar
@@ -12,36 +11,42 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.widget.TextView
+import fr.montpelliertechhub.abctestchronometer.models.ABTestContainer
+import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 
 
 infix fun ViewGroup.inflate(@LayoutRes res: Int): View =
-        LayoutInflater.from(this.context).inflate(res, this, false)
+    LayoutInflater.from(this.context).inflate(res, this, false)
 
 class ABCAdapter : RecyclerView.Adapter<ABCAdapter.ABCViewHolder>() {
-
-
     class ABCViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        fun bind(abTest: ABTestContainer) {
-            itemView.findViewById<TextView>(R.id.destination_textview).text = abTest.title
-            itemView.findViewById<TextView>(R.id.road_textview).setText(
-                    """${abTest.tries.size} petits chemin${ if (abTest.tries.size > 1) "s" else ""}
-                        | dont ${abTest.tries.filter { it.tries.size > 0 }.size} déjà pris
-                    """.trimMargin())
+        fun bind(abTestContainer: ABTestContainer) {
+            val pathsTaken: Int = abTestContainer.abtests.fold(0) { total, next ->
+                if(next.tries.isNotEmpty()) total + 1
+                else total
+            }
+            itemView.findViewById<TextView>(R.id.destination_textview).text = abTestContainer.title
+            itemView.findViewById<TextView>(R.id.road_textview).text =
+                """
+                    |${abTestContainer.abtests.size} petits chemin${ if (abTestContainer.abtests.size > 1) "s" else ""}
+                    |dont ${pathsTaken} déjà pris
+                """.trimMargin()
         }
     }
 
     override fun onBindViewHolder(holder: ABCViewHolder?, position: Int) {
-        holder?.bind(ABTestRepository.abTestList.get(position))
+        holder?.bind(ABTestRepository.abTestContainer)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
-        = ABCViewHolder(parent inflate R.layout.abc_item_view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ABCViewHolder(parent inflate R.layout.abc_item_view)
 
-    override fun getItemCount() = ABTestRepository.abTestList.size
+    override fun getItemCount() = ABTestRepository.abTestContainer.abtests.size
 
 }
+
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     val mRecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView)}

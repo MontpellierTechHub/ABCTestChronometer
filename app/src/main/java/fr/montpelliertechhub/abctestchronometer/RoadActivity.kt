@@ -1,4 +1,4 @@
-package fr.montpelliertechhub.abctestchronomtre
+package fr.montpelliertechhub.abctestchronometer
 
 import android.app.Activity
 import android.os.Bundle
@@ -7,18 +7,18 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import kotlinx.android.synthetic.main.road_item_view.*
-import kotlinx.android.synthetic.main.road_resume_item.*
-import kotlinx.android.synthetic.main.activity_road.*
+import fr.montpelliertechhub.abctestchronometer.models.ABTest
+import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 
 inline fun <reified V : View> View.bindView(resId: Int): ReadOnlyProperty<View, V> = Delegate {
-    this.findViewById<V>(resId) as V
+    this.findViewById<V>(resId)
 }
+
 inline fun <reified V : View> Activity.bindView(resId: Int): ReadOnlyProperty<Activity, V> = Delegate {
-    this.findViewById<V>(resId) as V
+    this.findViewById<V>(resId)
 }
 
 class Delegate<in A, out V>(val funFindView: (A) -> V) : ReadOnlyProperty<A, V> {
@@ -32,8 +32,6 @@ class RoadActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_road)
-
-
     }
 }
 
@@ -69,9 +67,7 @@ class RoadAdapter : RecyclerView.Adapter<RoadAdapter.RoadViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RoadViewHolder?, position: Int) {
-
-
-        holder?.bind(ABTestRepository.abTestList.get(position))
+        holder?.bind(ABTestRepository.abTestContainer.abtests[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -81,13 +77,13 @@ class RoadAdapter : RecyclerView.Adapter<RoadAdapter.RoadViewHolder>() {
             else -> throw IllegalStateException("Not managed view type")
         }
 
-    override fun getItemCount() = ABTestRepository.abTestList.size
+    override fun getItemCount() = ABTestRepository.abTestContainer.abtests.size
 
     override fun getItemViewType(position: Int): Int =
-            when (position) {
-                0 -> ITEM_RESUME
-                else -> ITEM_DETAIL
-            }
+        when (position) {
+            0 -> ITEM_RESUME
+            else -> ITEM_DETAIL
+        }
 
 
 }
