@@ -6,7 +6,7 @@ import fr.montpelliertechhub.abctestchronometer.models.Try
 
 object ABTestRepository {
 
-    val abTestContainer: ABTestContainer = ABTestContainer(
+    val abTestContainer: MutableList<ABTestContainer> = mutableListOf(ABTestContainer(
         title = "MAUG",
         abtests = listOf(
             ABTest(
@@ -24,6 +24,6 @@ object ABTestRepository {
                 )
             )
         )
-    )
+    ))
 
 }

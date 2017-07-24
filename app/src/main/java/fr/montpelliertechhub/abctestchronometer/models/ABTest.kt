@@ -9,9 +9,9 @@ package fr.montpelliertechhub.abctestchronometer.models
  * @property tries all the tries made for this ABTest.
  * @see Try
  */
-data class ABTest (
-    val title : String,
-    val from : String,
-    val to: String ,
-    val tries: List<Try>
+data class ABTest(
+        val title: String,
+        val from: String,
+        val to: String,
+        val tries: List<Try>
 )

@@ -8,6 +8,6 @@ package fr.montpelliertechhub.abctestchronometer.models
  * @see ABTest
  */
 data class ABTestContainer(
-    val title: String,
-    val abtests: List<ABTest>
+        val title: String,
+        val abtests: List<ABTest>
 )
