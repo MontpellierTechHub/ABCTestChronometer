@@ -1,0 +1,33 @@
+language: android
+jdk: oraclejdk8
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
+
+env:
+  global:
+  - ANDROID_API=26
+  - ANDROID_BUILD_TOOLS=26.0.0
+
+android:
+  components:
+  - tools
+  - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
+  - platform-tools
+  - build-tools-$ANDROID_BUILD_TOOLS
+  - android-$ANDROID_API
+  - extra-google-m2repository
+  - extra-android-m2repository
+
+before_install:
+  - chmod +x gradlew
+
+before_script:
+
+script:
+  - "./gradlew clean build lint test"
