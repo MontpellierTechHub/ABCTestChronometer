@@ -1,4 +1,4 @@
-# ABC Test Chronometer (WIP)
+# ABC Test Chronometer (WIP) [![Build Status](https://travis-ci.org/MontpellierTechHub/ABCTestChronometer.svg?branch=master)](https://travis-ci.org/MontpellierTechHub/ABCTestChronometer)
 
 A simple android/kotlin application that allow you to time your commute to know which way is faster
 
