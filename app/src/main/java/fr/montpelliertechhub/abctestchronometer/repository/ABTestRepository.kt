@@ -24,6 +24,24 @@ object ABTestRepository {
                 )
             )
         )
-    ))
+    ), ABTestContainer(
+                    title = "GOT",
+                    abtests = listOf(
+                            ABTest(
+                                    "De l'autre côté",
+                                    "Bravoos",
+                                    "King's Landing",
+                                    tries = listOf()
+                            ),
+                            ABTest(
+                                    "Depuis moins le lointain",
+                                    "Castelnau",
+                                    "Montpellier",
+                                    tries = listOf(
+                                            Try(value = 25.0, date = "Hier")
+                                    )
+                            )
+                    )
+            ))
 
 }
