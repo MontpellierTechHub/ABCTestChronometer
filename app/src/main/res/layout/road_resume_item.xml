@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        android:textSize="14sp"
+        android:textSize="20sp"
         android:textAllCaps="true"
         android:fontFamily="sans-serif-condensed"
         tools:text="Boulot > travail"/>
