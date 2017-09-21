@@ -23,6 +23,6 @@ class ABTestUnitTest {
                         Try(42.0, "now")
                 ))
 
-        Assert.assertEquals("getBestTime return 25", Try(2.0, "today"), abTest.getBestTime())
+        Assert.assertEquals("getBestTime return 25", Try(25.0, "today"), abTest.getBestTime())
     }
 }
