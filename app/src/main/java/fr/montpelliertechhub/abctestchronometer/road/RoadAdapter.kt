@@ -54,7 +54,7 @@ class RoadAdapter(val abTestContainer: ABTestContainer, val listener: (ABTest) -
         }
     }
 
-    override fun onBindViewHolder(holder: RoadViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RoadViewHolder, position: Int) {
         when(holder){
             is DetailRoadViewHolder -> holder.bind(abTestContainer.abtests[position - 1], listener)
             is ResumeRoadViewHolder -> holder.bind(abTestContainer.getBestWay())

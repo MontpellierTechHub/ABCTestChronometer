@@ -1,6 +1,5 @@
 package fr.montpelliertechhub.abctestchronometer
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -43,8 +42,8 @@ class ABCAdapter(val listener: (ABTestContainer) -> Unit) : RecyclerView.Adapter
         }
     }
 
-    override fun onBindViewHolder(holder: ABCViewHolder?, position: Int) {
-        holder?.bind(ABTestRepository.abTestContainer[position], listener)
+    override fun onBindViewHolder(holder: ABCViewHolder, position: Int) {
+        holder.bind(ABTestRepository.abTestContainer[position], listener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -100,9 +99,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
