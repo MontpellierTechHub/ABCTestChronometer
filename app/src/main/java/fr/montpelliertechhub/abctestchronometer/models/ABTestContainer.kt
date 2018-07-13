@@ -12,8 +12,8 @@ data class ABTestContainer(
         val abtests: List<ABTest> ) {
 
 
-    fun getBestWay(): ABTest {
-        return abtests.sortedWith(compareBy({ it.getBestTime().value }))[0]
+    fun getBestWay(): ABTest? {
+        return abtests.sortedWith(compareBy{ it.getBestTime()?.value }).firstOrNull()
     }
 
 }

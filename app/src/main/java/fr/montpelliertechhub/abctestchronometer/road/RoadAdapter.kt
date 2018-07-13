@@ -29,8 +29,12 @@ class RoadAdapter(val abTestContainer: ABTestContainer, val listener: (ABTest) -
             // Nothing specific here
         }
 
-        fun bind(abTest: ABTest) {
-            textView.text = "Meilleur chemin est " + abTest.title
+        fun bind(abTest: ABTest?) {
+            if (abTest == null) {
+                textView.text = "Aucune mesure"
+            } else {
+                textView.text = "Le mMeilleur chemin est \n" + abTest.title
+            }
         }
     }
 
@@ -55,7 +59,7 @@ class RoadAdapter(val abTestContainer: ABTestContainer, val listener: (ABTest) -
     }
 
     override fun onBindViewHolder(holder: RoadViewHolder, position: Int) {
-        when(holder){
+        when (holder) {
             is DetailRoadViewHolder -> holder.bind(abTestContainer.abtests[position - 1], listener)
             is ResumeRoadViewHolder -> holder.bind(abTestContainer.getBestWay())
             else -> Log.w(TAG, "Case not managed /!\\")
