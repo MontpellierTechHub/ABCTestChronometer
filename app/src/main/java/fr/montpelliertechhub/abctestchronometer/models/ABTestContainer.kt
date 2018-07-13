@@ -9,5 +9,11 @@ package fr.montpelliertechhub.abctestchronometer.models
  */
 data class ABTestContainer(
         val title: String,
-        val abtests: List<ABTest>
-)
+        val abtests: List<ABTest> ) {
+
+
+    fun getBestWay(): ABTest {
+        return abtests.sortedWith(compareBy({ it.getBestTime().value }))[0]
+    }
+
+}

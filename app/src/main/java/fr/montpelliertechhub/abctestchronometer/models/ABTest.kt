@@ -13,5 +13,10 @@ data class ABTest(
         val title: String,
         val from: String,
         val to: String,
-        val tries: List<Try>
-)
+        val tries: List<Try>) {
+
+    fun getBestTime(): Try {
+        return tries.sortedWith(compareBy({ it.value }))[0]
+    }
+
+}

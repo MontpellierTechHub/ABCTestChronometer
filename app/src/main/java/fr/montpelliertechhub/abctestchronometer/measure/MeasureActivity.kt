@@ -4,20 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Button
+import android.widget.Chronometer
 import fr.montpelliertechhub.abctestchronometer.R
 import fr.montpelliertechhub.abctestchronometer.models.ABTest
-import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
-
+import fr.montpelliertechhub.abctestchronometer.utils.ChronometerView
+import fr.montpelliertechhub.abctestchronometer.utils.Timer
 
 
 class MeasureActivity : AppCompatActivity() {
 
-    lateinit var abTest : ABTest
 
     companion object {
 
         private const val INTENT_ABTESTCONTAINER_POS: String = "intent_abtestcontainer_position"
-        private const val  INTENT_ABTEST_POS: String = "intent_abtest_position"
+        private const val INTENT_ABTEST_POS: String = "intent_abtest_position"
 
         fun onNewIntent(context: Context, containerPosition: Int, abTestPosition: Int): Intent {
             return Intent(context, MeasureActivity::class.java).apply {
@@ -27,6 +28,14 @@ class MeasureActivity : AppCompatActivity() {
         }
     }
 
+    val mTimerChronometer by lazy { findViewById<Chronometer>(R.id.timerTextView) }
+    val mTimerButton by lazy { findViewById<Button>(R.id.timerButton) }
+    val mSecondView by lazy { findViewById<ChronometerView>(R.id.secondView) }
+
+
+    lateinit var mAbTest: ABTest
+    lateinit var mTimer: Timer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_measure)
@@ -34,6 +43,34 @@ class MeasureActivity : AppCompatActivity() {
         val positionContainerPosition = intent.getIntExtra(INTENT_ABTESTCONTAINER_POS, -1)
         val abTestPosition = intent.getIntExtra(INTENT_ABTEST_POS, -1)
 
-        abTest = ABTestRepository.abTestContainer[positionContainerPosition].abtests[abTestPosition]
+        // mAbTest = ABTestRepository.abTestContainer[positionContainerPosition].abtests[abTestPosition]
+
+        mTimer = Timer(mTimerChronometer, getSharedPreferences("ChronometerSample", MODE_PRIVATE))
+        mTimer.resumeState()
+        if(mTimer.isRunning()){
+
+            resumeTimer()
+        }
+        mTimerButton.setOnClickListener {
+            if(mTimer.isRunning()){
+                pauseTimer()
+            } else {
+                resumeTimer()
+            }
+        }
     }
+
+    fun pauseTimer(){
+        mTimerButton.setText("Resume")
+        mTimer.pauseChronometer()
+        mSecondView.pause()
+    }
+
+    fun resumeTimer(){
+
+        mTimerButton.setText("Pause")
+        mTimer.startChronometer()
+        mSecondView.start()
+    }
+
 }
