@@ -52,7 +52,7 @@ class ChronometerView @JvmOverloads constructor(
         setWillNotDraw(false)
     }
 
-    fun start() {
+    fun start(startChronometer: Long) {
         mState = State.RUNNING
         this.invalidate()
     }

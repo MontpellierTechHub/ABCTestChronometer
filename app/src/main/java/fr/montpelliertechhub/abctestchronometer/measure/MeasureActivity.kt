@@ -61,16 +61,14 @@ class MeasureActivity : AppCompatActivity() {
     }
 
     fun pauseTimer(){
-        mTimerButton.setText("Resume")
+        mTimerButton.text = "Resume"
         mTimer.pauseChronometer()
         mSecondView.pause()
     }
 
     fun resumeTimer(){
-
-        mTimerButton.setText("Pause")
-        mTimer.startChronometer()
-        mSecondView.start()
+        mTimerButton.text = "Pause"
+        mSecondView.start(mTimer.startChronometer())
     }
 
 }

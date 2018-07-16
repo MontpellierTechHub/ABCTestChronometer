@@ -5,10 +5,6 @@ import android.os.SystemClock
 import android.widget.Chronometer
 
 
-
-
-
-
 /**
  * A timer that measure stuff
  *
@@ -36,17 +32,17 @@ class Timer(val mChronometer: Chronometer, val sharedPreferences: SharedPreferen
     }
 
     private fun pauseStateChronometer() {
-        mTimeWhenPaused = sharedPreferences.getLong(KEY_TIME_PAUSED + mChronometer.getId(),
-                mChronometer.getBase() - SystemClock.elapsedRealtime())
+        mTimeWhenPaused = sharedPreferences.getLong(KEY_TIME_PAUSED + mChronometer.id,
+                mChronometer.base - SystemClock.elapsedRealtime())
         //some negative value
-        mChronometer.setBase(SystemClock.elapsedRealtime() + mTimeWhenPaused)
+        mChronometer.base = SystemClock.elapsedRealtime() + mTimeWhenPaused
         mChronometer.stop()
         if (isHourFormat) {
-            val text = mChronometer.getText()
+            val text = mChronometer.text
             if (text.length == 5) {
-                mChronometer.setText("00:" + text)
+                mChronometer.text = "00:" + text
             } else if (text.length == 7) {
-                mChronometer.setText("0" + text)
+                mChronometer.text = "0" + text
             }
         }
     }
@@ -55,16 +51,16 @@ class Timer(val mChronometer: Chronometer, val sharedPreferences: SharedPreferen
         sharedPreferences.edit().putInt(KEY_STATE + mChronometer.getId(), state.ordinal).apply()
     }
 
-    fun startChronometer() {
+    fun startChronometer(): Long {
         storeState(ChronometerState.Running)
         saveBase()
-        startStateChronometer()
+        return startStateChronometer()
     }
 
     fun hourFormat(hourFormat: Boolean) {
         isHourFormat = hourFormat
         if (isHourFormat) {
-            mChronometer.setOnChronometerTickListener({ c ->
+            mChronometer.setOnChronometerTickListener { c ->
                 val elapsedMillis = SystemClock.elapsedRealtime() - c.base
                 if (elapsedMillis > 3600000L) {
                     c.format = "0%s"
@@ -72,75 +68,75 @@ class Timer(val mChronometer: Chronometer, val sharedPreferences: SharedPreferen
                 } else {
                     c.format = "00:%s"
                 }
-            })
+            }
         } else {
 
-            mChronometer.setOnChronometerTickListener(null)
-            mChronometer.setFormat("%s")
+            mChronometer.onChronometerTickListener = null
+            mChronometer.format = "%s"
         }
     }
 
 
-    private fun startStateChronometer() {
-        mTimeBase = sharedPreferences.getLong(KEY_BASE + mChronometer.getId(),
+    private fun startStateChronometer(): Long {
+        mTimeBase = sharedPreferences.getLong(KEY_BASE + mChronometer.id,
                 SystemClock.elapsedRealtime()) //0
-        mTimeWhenPaused = sharedPreferences.getLong(KEY_TIME_PAUSED + mChronometer.getId(), 0)
-        mChronometer.setBase(mTimeBase + mTimeWhenPaused)
+        mTimeWhenPaused = sharedPreferences.getLong(KEY_TIME_PAUSED + mChronometer.id, 0)
+        val startTime = mTimeBase + mTimeWhenPaused
+        mChronometer.base = startTime
         mChronometer.start()
+        return startTime
     }
 
     fun stopChronometer() {
         storeState(ChronometerState.Stopped)
-        mChronometer.setBase(SystemClock.elapsedRealtime())
+        mChronometer.base = SystemClock.elapsedRealtime()
         mChronometer.stop()
         if (isHourFormat)
-            mChronometer.setText("00:00:00")
+            mChronometer.text = "00:00:00"
         else
-            mChronometer.setText("00:00")
+            mChronometer.text = "00:00"
         clearState()
     }
 
     private fun clearState() {
         storeState(ChronometerState.Stopped)
         sharedPreferences.edit()
-                .remove(KEY_BASE + mChronometer.getId())
-                .remove(KEY_TIME_PAUSED + mChronometer.getId())
+                .remove(KEY_BASE + mChronometer.id)
+                .remove(KEY_TIME_PAUSED + mChronometer.id)
                 .apply()
         mTimeWhenPaused = 0
     }
 
     private fun saveBase() {
         sharedPreferences.edit()
-                .putLong(KEY_BASE + mChronometer.getId(), SystemClock.elapsedRealtime())
+                .putLong(KEY_BASE + mChronometer.id, SystemClock.elapsedRealtime())
                 .apply()
     }
 
     private fun saveTimeWhenPaused() {
         sharedPreferences.edit()
-                .putLong(KEY_TIME_PAUSED + mChronometer.getId(),
-                        mChronometer.getBase() - SystemClock.elapsedRealtime())
+                .putLong(KEY_TIME_PAUSED + mChronometer.id,
+                        mChronometer.base - SystemClock.elapsedRealtime())
                 .apply()
     }
 
     fun resumeState() {
-        val state = ChronometerState.values()[sharedPreferences.getInt(KEY_STATE + mChronometer.getId(),
+        val state = ChronometerState.values()[sharedPreferences.getInt(KEY_STATE + mChronometer.id,
                 ChronometerState.Stopped.ordinal)]
-        if (state.ordinal == ChronometerState.Stopped.ordinal) {
-            stopChronometer()
-        } else if (state.ordinal == ChronometerState.Paused.ordinal) {
-            pauseStateChronometer()
-        } else {
-            startStateChronometer()
+        when {
+            state.ordinal == ChronometerState.Stopped.ordinal -> stopChronometer()
+            state.ordinal == ChronometerState.Paused.ordinal -> pauseStateChronometer()
+            else -> startStateChronometer()
         }
     }
 
     fun isRunning(): Boolean {
-        return ChronometerState.values()[sharedPreferences.getInt(KEY_STATE + mChronometer.getId(),
+        return ChronometerState.values()[sharedPreferences.getInt(KEY_STATE + mChronometer.id,
                 ChronometerState.Stopped.ordinal)] == ChronometerState.Running
     }
 
     fun isPaused(): Boolean {
-        return ChronometerState.values()[sharedPreferences.getInt(KEY_STATE + mChronometer.getId(),
+        return ChronometerState.values()[sharedPreferences.getInt(KEY_STATE + mChronometer.id,
                 ChronometerState.Stopped.ordinal)] == ChronometerState.Paused
     }
 }
