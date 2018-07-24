@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Button
-import android.widget.Chronometer
+import arrow.core.Some
 import fr.montpelliertechhub.abctestchronometer.R
 import fr.montpelliertechhub.abctestchronometer.models.ABTest
-import fr.montpelliertechhub.abctestchronometer.utils.ChronometerView
+import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
 import fr.montpelliertechhub.abctestchronometer.utils.Timer
+import kotlinx.android.synthetic.main.activity_measure.*
 
 
 class MeasureActivity : AppCompatActivity() {
@@ -28,11 +28,6 @@ class MeasureActivity : AppCompatActivity() {
         }
     }
 
-    val mTimerChronometer by lazy { findViewById<Chronometer>(R.id.timerTextView) }
-    val mTimerButton by lazy { findViewById<Button>(R.id.timerButton) }
-    val mSecondView by lazy { findViewById<ChronometerView>(R.id.secondView) }
-
-
     lateinit var mAbTest: ABTest
     lateinit var mTimer: Timer
 
@@ -43,32 +38,36 @@ class MeasureActivity : AppCompatActivity() {
         val positionContainerPosition = intent.getIntExtra(INTENT_ABTESTCONTAINER_POS, -1)
         val abTestPosition = intent.getIntExtra(INTENT_ABTEST_POS, -1)
 
-        // mAbTest = ABTestRepository.abTestContainer[positionContainerPosition].abtests[abTestPosition]
+        mAbTest = ABTestRepository.abTestContainer[positionContainerPosition].abtests[abTestPosition]
 
-        mTimer = Timer(mTimerChronometer, getSharedPreferences("ChronometerSample", MODE_PRIVATE))
-        mTimer.resumeState()
-        if(mTimer.isRunning()){
-
-            resumeTimer()
+        mTimer = Timer(timerChronometer, getSharedPreferences("ChronometerSample", MODE_PRIVATE))
+        val baseTime = mTimer.resumeState()
+        when(baseTime) {
+            is Some -> resumeTimer(baseTime.t)
         }
-        mTimerButton.setOnClickListener {
-            if(mTimer.isRunning()){
+        timerButton.setOnClickListener {
+            if (mTimer.isRunning()) {
                 pauseTimer()
             } else {
-                resumeTimer()
+                resumeTimer(mTimer.startChronometer())
             }
         }
     }
 
-    fun pauseTimer(){
-        mTimerButton.text = "Resume"
-        mTimer.pauseChronometer()
-        mSecondView.pause()
+    override fun onPause() {
+        super.onPause()
+        mTimer.save()
     }
 
-    fun resumeTimer(){
-        mTimerButton.text = "Pause"
-        mSecondView.start(mTimer.startChronometer())
+    private fun pauseTimer() {
+        timerButton.setText(R.string.action_resume)
+        mTimer.pauseChronometer()
+        chronometerView.pause()
+    }
+
+    private fun resumeTimer(baseTime: Long) {
+        timerButton.setText(R.string.action_pause)
+        chronometerView.start(baseTime)
     }
 
 }
