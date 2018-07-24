@@ -5,18 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import fr.montpelliertechhub.abctestchronometer.R
 import fr.montpelliertechhub.abctestchronometer.measure.MeasureActivity
 import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
-import fr.montpelliertechhub.abctestchronometer.utils.bindView
-
-
+import kotlinx.android.synthetic.main.activity_road.*
 
 
 class RoadActivity : AppCompatActivity() {
-
-    val mRecyclerview by this.bindView<RecyclerView>(R.id.recyclerView)
 
     companion object {
 
@@ -35,13 +30,13 @@ class RoadActivity : AppCompatActivity() {
 
         val containerPosition = intent.getIntExtra(INTENT_ABTESTCONTAINER_POS, -1)
 
-        mRecyclerview.layoutManager = LinearLayoutManager(this)
-        mRecyclerview.adapter = RoadAdapter(ABTestRepository.abTestContainer[containerPosition], {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = RoadAdapter(ABTestRepository.abTestContainer[containerPosition]) {
             // We may use Anko here, see https://discuss.kotlinlang.org/t/java-interopt-android-intent/1450
             startActivity(MeasureActivity.onNewIntent(
                     this@RoadActivity,
                     containerPosition,
                     ABTestRepository.abTestContainer[containerPosition].abtests.indexOf(it)))
-        })
+        }
     }
 }

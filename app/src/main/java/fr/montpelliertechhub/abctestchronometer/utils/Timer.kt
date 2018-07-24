@@ -28,10 +28,6 @@ class Timer(private val mChronometer: Chronometer, private val sharedPreferences
     private var mTimeWhenPaused: Long = 0
     private var mTimeBase: Long = 0
 
-    init {
-
-    }
-
     fun resumeState(): Option<Long> {
         val state = ChronometerState.values()[sharedPreferences.getInt(KEY_STATE + mChronometer.id,
                                                                        ChronometerState.Stopped.ordinal)]
@@ -99,7 +95,6 @@ class Timer(private val mChronometer: Chronometer, private val sharedPreferences
             mChronometer.format = "%s"
         }
     }
-
 
     private fun startStateChronometer(): Long {
         mTimeBase = sharedPreferences.getLong(KEY_TIME_BASE + mChronometer.id, SystemClock.elapsedRealtime()) //0
