@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 27
@@ -23,6 +23,8 @@ android {
     }
 }
 
+def arrow_version = "0.7.2"
+
 dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -31,5 +33,14 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+
+    implementation "io.arrow-kt:arrow-core:$arrow_version"
+    implementation "io.arrow-kt:arrow-syntax:$arrow_version"
+    implementation "io.arrow-kt:arrow-typeclasses:$arrow_version"
+    implementation "io.arrow-kt:arrow-data:$arrow_version"
+    implementation "io.arrow-kt:arrow-instances-core:$arrow_version"
+    implementation "io.arrow-kt:arrow-instances-data:$arrow_version"
+    kapt    "io.arrow-kt:arrow-annotations-processor:$arrow_version"
+
     testImplementation 'junit:junit:4.12'
 }
