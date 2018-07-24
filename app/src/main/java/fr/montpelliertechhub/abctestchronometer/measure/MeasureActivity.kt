@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import arrow.core.Some
 import fr.montpelliertechhub.abctestchronometer.R
 import fr.montpelliertechhub.abctestchronometer.models.ABTest
@@ -13,7 +14,6 @@ import kotlinx.android.synthetic.main.activity_measure.*
 
 
 class MeasureActivity : AppCompatActivity() {
-
 
     companion object {
 
@@ -40,6 +40,8 @@ class MeasureActivity : AppCompatActivity() {
 
         mAbTest = ABTestRepository.abTestContainer[positionContainerPosition].abtests[abTestPosition]
 
+        titleTextView.text = getString(R.string.title_activity_measure, mAbTest.from, mAbTest.to)
+
         mTimer = Timer(timerChronometer, getSharedPreferences("ChronometerSample", MODE_PRIVATE))
         val baseTime = mTimer.resumeState()
         when(baseTime) {
@@ -52,11 +54,12 @@ class MeasureActivity : AppCompatActivity() {
                 resumeTimer(mTimer.startChronometer())
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mTimer.save()
+        stopButton.setOnClickListener{
+            mTimer.stopChronometer()
+            chronometerView.stop()
+            timerButton.setText(R.string.action_resume)
+            stopButton.visibility = View.GONE
+        }
     }
 
     private fun pauseTimer() {
@@ -68,6 +71,7 @@ class MeasureActivity : AppCompatActivity() {
     private fun resumeTimer(baseTime: Long) {
         timerButton.setText(R.string.action_pause)
         chronometerView.start(baseTime)
+        stopButton.visibility = View.VISIBLE
     }
 
 }
