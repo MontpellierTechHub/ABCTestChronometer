@@ -13,7 +13,7 @@ data class ABTestContainer(
 
 
     fun getBestWay(): ABTest? {
-        return abtests.sortedWith(compareBy{ it.getBestTime()?.value }).firstOrNull()
+        return abtests.filter {it.tries.isNotEmpty()}.sortedWith(compareBy{ it.getBestTime()?.value }).firstOrNull()
     }
 
 }

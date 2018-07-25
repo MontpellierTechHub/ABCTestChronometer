@@ -33,7 +33,7 @@ class RoadAdapter(val abTestContainer: ABTestContainer, val listener: (ABTest) -
             if (abTest == null) {
                 textView.text = "Aucune mesure"
             } else {
-                textView.text = "Le mMeilleur chemin est \n" + abTest.title
+                textView.text = "Le meilleur chemin est \n" + abTest.title
             }
         }
     }
