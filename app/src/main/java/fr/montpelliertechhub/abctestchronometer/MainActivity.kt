@@ -1,59 +1,65 @@
 package fr.montpelliertechhub.abctestchronometer
 
 import android.os.Bundle
-import android.support.annotation.LayoutRes
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import fr.montpelliertechhub.abctestchronometer.models.ABTestContainer
 import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
-import kotlinx.android.synthetic.main.activity_main2.*
-import kotlinx.android.synthetic.main.app_bar_main2.*
+import fr.montpelliertechhub.abctestchronometer.road.RoadActivity
+import fr.montpelliertechhub.abctestchronometer.utils.inflate
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 
 
-infix fun ViewGroup.inflate(@LayoutRes res: Int): View =
-    LayoutInflater.from(this.context).inflate(res, this, false)
+class ABCAdapter(val listener: (ABTestContainer) -> Unit) : RecyclerView.Adapter<ABCAdapter.ABCViewHolder>() {
 
-class ABCAdapter : RecyclerView.Adapter<ABCAdapter.ABCViewHolder>() {
     class ABCViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        fun bind(abTestContainer: ABTestContainer) {
+        fun bind(abTestContainer: ABTestContainer,
+                 listener: (ABTestContainer) -> Unit) {
             val pathsTaken: Int = abTestContainer.abtests.fold(0) { total, next ->
-                if(next.tries.isNotEmpty()) total + 1
+                if (next.tries.isNotEmpty()) total + 1
                 else total
             }
             itemView.findViewById<TextView>(R.id.destination_textview).text = abTestContainer.title
             itemView.findViewById<TextView>(R.id.road_textview).text =
-                """
-                    |${abTestContainer.abtests.size} petits chemin${ if (abTestContainer.abtests.size > 1) "s" else ""}
+                    """
+                    |${abTestContainer.abtests.size} petits chemin${if (abTestContainer.abtests.size > 1) "s" else ""}
                     |dont ${pathsTaken} déjà pris
                 """.trimMargin()
+            itemView.setOnClickListener {
+                listener(abTestContainer)
+            }
         }
     }
 
-    override fun onBindViewHolder(holder: ABCViewHolder?, position: Int) {
-        holder?.bind(ABTestRepository.abTestContainer)
+    override fun onBindViewHolder(holder: ABCViewHolder, position: Int) {
+        holder.bind(ABTestRepository.abTestContainer[position], listener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ABCViewHolder(parent inflate R.layout.abc_item_view)
+            ABCViewHolder(parent inflate R.layout.abc_item_view)
 
-    override fun getItemCount() = ABTestRepository.abTestContainer.abtests.size
+    override fun getItemCount() = ABTestRepository.abTestContainer.size
 
 }
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    val mRecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView)}
+    val mRecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main2)
+        setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
@@ -69,9 +75,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         mRecyclerView.layoutManager = LinearLayoutManager(this)
-        mRecyclerView.adapter = ABCAdapter()
-
-
+        mRecyclerView.adapter = ABCAdapter {
+            // We may use Anko here, see https://discuss.kotlinlang.org/t/java-interopt-android-intent/1450
+            startActivity(RoadActivity.onNewIntent(this@MainActivity, ABTestRepository.abTestContainer.indexOf(it)))
+        }
     }
 
     override fun onBackPressed() {
@@ -92,9 +99,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

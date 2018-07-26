@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="fr.montpelliertechhub.abctestchronometer.RoadActivity"></activity>
+        <activity android:name="fr.montpelliertechhub.abctestchronometer.road.RoadActivity"></activity>
+        <activity android:name="fr.montpelliertechhub.abctestchronometer.measure.MeasureActivity"></activity>
     </application>
 
 </manifest>
