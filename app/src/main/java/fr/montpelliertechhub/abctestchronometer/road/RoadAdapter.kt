@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import fr.montpelliertechhub.abctestchronometer.R
+import fr.montpelliertechhub.abctestchronometer.models.AB
 import fr.montpelliertechhub.abctestchronometer.models.ABTest
-import fr.montpelliertechhub.abctestchronometer.models.ABTestContainer
 import fr.montpelliertechhub.abctestchronometer.utils.inflate
 
-class RoadAdapter(val abTestContainer: ABTestContainer, val listener: (ABTest) -> Unit) : RecyclerView.Adapter<RoadAdapter.RoadViewHolder>() {
+class RoadAdapter(val abTest: ABTest, val listener: (AB) -> Unit) : RecyclerView.Adapter<RoadAdapter.RoadViewHolder>() {
 
     val TAG: String = RoadAdapter::class.java.simpleName
 
@@ -29,11 +29,11 @@ class RoadAdapter(val abTestContainer: ABTestContainer, val listener: (ABTest) -
             // Nothing specific here
         }
 
-        fun bind(abTest: ABTest?) {
-            if (abTest == null) {
+        fun bind(ab: AB?) {
+            if (ab == null) {
                 textView.text = "Aucune mesure"
             } else {
-                textView.text = "Le meilleur chemin est \n" + abTest.title
+                textView.text = "Le meilleur chemin est \n" + ab.title
             }
         }
     }
@@ -48,20 +48,20 @@ class RoadAdapter(val abTestContainer: ABTestContainer, val listener: (ABTest) -
             // Nothing specific here
         }
 
-        fun bind(abTest: ABTest, listener: (ABTest) -> Unit) {
+        fun bind(ab: AB, listener: (AB) -> Unit) {
             bind()
-            roadTextView.text = abTest.title
-            destinationTextView.text = "De " + abTest.from + " jusqu'à " + abTest.to
-            triesTextView.text = abTest.tries.size.toString() + " mesure(s)"
+            roadTextView.text = ab.title
+            destinationTextView.text = "De " + ab.from + " jusqu'à " + ab.to
+            triesTextView.text = ab.tries.size.toString() + " mesure(s)"
 
-            itemView.setOnClickListener { listener(abTest) }
+            itemView.setOnClickListener { listener(ab) }
         }
     }
 
     override fun onBindViewHolder(holder: RoadViewHolder, position: Int) {
         when (holder) {
-            is DetailRoadViewHolder -> holder.bind(abTestContainer.abtests[position - 1], listener)
-            is ResumeRoadViewHolder -> holder.bind(abTestContainer.getBestWay())
+            is DetailRoadViewHolder -> holder.bind(abTest.ab[position - 1], listener)
+            is ResumeRoadViewHolder -> holder.bind(abTest.getBestWay())
             else -> Log.w(TAG, "Case not managed /!\\")
         }
     }
@@ -73,7 +73,7 @@ class RoadAdapter(val abTestContainer: ABTestContainer, val listener: (ABTest) -
                 else -> throw IllegalStateException("Not managed view type")
             }
 
-    override fun getItemCount() = abTestContainer.abtests.size + 1
+    override fun getItemCount() = abTest.ab.size + 1
 
     override fun getItemViewType(position: Int): Int =
             when (position) {

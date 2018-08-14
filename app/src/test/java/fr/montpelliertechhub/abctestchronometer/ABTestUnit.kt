@@ -1,20 +1,20 @@
 package fr.montpelliertechhub.abctestchronometer
 
-import fr.montpelliertechhub.abctestchronometer.models.ABTest
+import fr.montpelliertechhub.abctestchronometer.models.AB
 import fr.montpelliertechhub.abctestchronometer.models.Try
 import org.junit.Assert
 import org.junit.Test
 
 /**
- * Test for {@link ABTestUnitTest}
+ * Test for {@link ABTestUnit}
  *
  * Created by Hugo Gresse on 21/09/2017.
  */
 
-class ABTestUnitTest {
+class ABTestUnit {
     @Test
     fun getBestTime_isCorrect() {
-        val abTest: ABTest = ABTest(
+        val ab: AB = AB(
                 "Super titre",
                 "Montpellier",
                 "Paris",
@@ -23,6 +23,6 @@ class ABTestUnitTest {
                         Try(42.0, "now")
                 ))
 
-        Assert.assertEquals("getBestTime return 25", Try(25.0, "today"), abTest.getBestTime())
+        Assert.assertEquals("getBestTime return 25", Try(25.0, "today"), ab.getBestTime())
     }
 }
