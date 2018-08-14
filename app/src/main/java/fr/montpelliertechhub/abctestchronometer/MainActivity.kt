@@ -19,6 +19,7 @@ import fr.montpelliertechhub.abctestchronometer.road.RoadActivity
 import fr.montpelliertechhub.abctestchronometer.utils.inflate
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 
 /**
@@ -61,8 +62,6 @@ class ABCAdapter(val abTests: MutableList<ABTest>, val listener: (ABTest) -> Uni
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    val mRecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView) }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -80,8 +79,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        mRecyclerView.layoutManager = LinearLayoutManager(this)
-        mRecyclerView.adapter = ABCAdapter(ABTestRepository.getInstance(applicationContext).getABTests()) {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = ABCAdapter(ABTestRepository.getInstance(applicationContext).getABTests()) {
             // We may use Anko here, see https://discuss.kotlinlang.org/t/java-interopt-android-intent/1450
             startActivity(RoadActivity.onNewIntent(this@MainActivity, ABTestRepository.getInstance(applicationContext).getABTests().indexOf(it)))
         }
