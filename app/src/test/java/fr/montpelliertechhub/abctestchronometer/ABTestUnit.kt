@@ -15,14 +15,15 @@ class ABTestUnit {
     @Test
     fun getBestTime_isCorrect() {
         val ab: AB = AB(
+                0,
                 "Super titre",
                 "Montpellier",
                 "Paris",
                 listOf(
-                        Try(25.0, "today"),
-                        Try(42.0, "now")
+                        Try(0, 25.0, "today"),
+                        Try(0, 42.0, "now")
                 ))
 
-        Assert.assertEquals("getBestTime return 25", Try(25.0, "today"), ab.getBestTime())
+        Assert.assertEquals("getBestTime return 25", Try(0, 25.0, "today"), ab.getBestTime())
     }
 }
