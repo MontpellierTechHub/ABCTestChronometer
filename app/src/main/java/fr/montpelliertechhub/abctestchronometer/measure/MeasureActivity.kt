@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import arrow.core.Some
 import fr.montpelliertechhub.abctestchronometer.R
-import fr.montpelliertechhub.abctestchronometer.models.ABTest
+import fr.montpelliertechhub.abctestchronometer.models.AB
 import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
 import fr.montpelliertechhub.abctestchronometer.utils.Timer
 import kotlinx.android.synthetic.main.activity_measure.*
@@ -28,7 +28,7 @@ class MeasureActivity : AppCompatActivity() {
         }
     }
 
-    lateinit var mAbTest: ABTest
+    lateinit var mAb: AB
     lateinit var mTimer: Timer
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,9 +38,9 @@ class MeasureActivity : AppCompatActivity() {
         val positionContainerPosition = intent.getIntExtra(INTENT_ABTESTCONTAINER_POS, -1)
         val abTestPosition = intent.getIntExtra(INTENT_ABTEST_POS, -1)
 
-        mAbTest = ABTestRepository.abTestContainer[positionContainerPosition].abtests[abTestPosition]
+        mAb = ABTestRepository.getInstance(applicationContext).getABTests()[positionContainerPosition].ab[abTestPosition]
 
-        titleTextView.text = getString(R.string.title_activity_measure, mAbTest.from, mAbTest.to)
+        titleTextView.text = getString(R.string.title_activity_measure, mAb.from, mAb.to)
 
         mTimer = Timer(timerChronometer, getSharedPreferences("ChronometerSample", MODE_PRIVATE))
         val baseTime = mTimer.resumeState()

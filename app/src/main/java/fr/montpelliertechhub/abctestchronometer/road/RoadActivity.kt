@@ -30,13 +30,15 @@ class RoadActivity : AppCompatActivity() {
 
         val containerPosition = intent.getIntExtra(INTENT_ABTESTCONTAINER_POS, -1)
 
+        val abTests = ABTestRepository.getInstance(applicationContext).getABTests()
+
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = RoadAdapter(ABTestRepository.abTestContainer[containerPosition]) {
+        recyclerView.adapter = RoadAdapter(abTests[containerPosition]) {
             // We may use Anko here, see https://discuss.kotlinlang.org/t/java-interopt-android-intent/1450
             startActivity(MeasureActivity.onNewIntent(
                     this@RoadActivity,
                     containerPosition,
-                    ABTestRepository.abTestContainer[containerPosition].abtests.indexOf(it)))
+                    abTests[containerPosition].ab.indexOf(it)))
         }
     }
 }

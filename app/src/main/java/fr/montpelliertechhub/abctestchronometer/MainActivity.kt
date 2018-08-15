@@ -13,49 +13,54 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import fr.montpelliertechhub.abctestchronometer.models.ABTestContainer
+import fr.montpelliertechhub.abctestchronometer.models.ABTest
 import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
 import fr.montpelliertechhub.abctestchronometer.road.RoadActivity
 import fr.montpelliertechhub.abctestchronometer.utils.inflate
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 
-class ABCAdapter(val listener: (ABTestContainer) -> Unit) : RecyclerView.Adapter<ABCAdapter.ABCViewHolder>() {
+/**
+ * TODO : architecture :
+ * https://github.com/googlesamples/android-architecture/blob/todo-mvp-kotlin/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/BaseView.kt
+ * https://github.com/googlesamples/android-architecture/blob/todo-mvp-clean/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/BaseView.java
+ * TODO : input
+ */
+class ABCAdapter(val abTests: MutableList<ABTest>, val listener: (ABTest) -> Unit) : RecyclerView.Adapter<ABCAdapter.ABCViewHolder>() {
 
     class ABCViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        fun bind(abTestContainer: ABTestContainer,
-                 listener: (ABTestContainer) -> Unit) {
-            val pathsTaken: Int = abTestContainer.abtests.fold(0) { total, next ->
+        fun bind(abTest: ABTest,
+                 listener: (ABTest) -> Unit) {
+            val pathsTaken: Int = abTest.ab.fold(0) { total, next ->
                 if (next.tries.isNotEmpty()) total + 1
                 else total
             }
-            itemView.findViewById<TextView>(R.id.destination_textview).text = abTestContainer.title
+            itemView.findViewById<TextView>(R.id.destination_textview).text = abTest.title
             itemView.findViewById<TextView>(R.id.road_textview).text =
                     """
-                    |${abTestContainer.abtests.size} petits chemin${if (abTestContainer.abtests.size > 1) "s" else ""}
+                    |${abTest.ab.size} petits chemin${if (abTest.ab.size > 1) "s" else ""}
                     |dont ${pathsTaken} déjà pris
                 """.trimMargin()
             itemView.setOnClickListener {
-                listener(abTestContainer)
+                listener(abTest)
             }
         }
     }
 
     override fun onBindViewHolder(holder: ABCViewHolder, position: Int) {
-        holder.bind(ABTestRepository.abTestContainer[position], listener)
+        holder.bind(abTests[position], listener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             ABCViewHolder(parent inflate R.layout.abc_item_view)
 
-    override fun getItemCount() = ABTestRepository.abTestContainer.size
+    override fun getItemCount() = abTests.size
 
 }
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    val mRecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,10 +79,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        mRecyclerView.layoutManager = LinearLayoutManager(this)
-        mRecyclerView.adapter = ABCAdapter {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = ABCAdapter(ABTestRepository.getInstance(applicationContext).getABTests()) {
             // We may use Anko here, see https://discuss.kotlinlang.org/t/java-interopt-android-intent/1450
-            startActivity(RoadActivity.onNewIntent(this@MainActivity, ABTestRepository.abTestContainer.indexOf(it)))
+            startActivity(RoadActivity.onNewIntent(this@MainActivity, ABTestRepository.getInstance(applicationContext).getABTests().indexOf(it)))
         }
     }
 

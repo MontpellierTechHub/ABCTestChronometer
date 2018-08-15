@@ -1,22 +1,31 @@
 package fr.montpelliertechhub.abctestchronometer.models
 
-/**
- * Represent a test to determine the time it takes to travel from point A to point B.
- *
- * @param title A title for the ABTest.
- * @property from the starting point of the travel (point A).
- * @property to the point of arrival of the travel (point B).
- * @property tries all the tries made for this ABTest.
- * @see Try
- */
-data class ABTest(
-        val title: String,
-        val from: String,
-        val to: String,
-        val tries: List<Try>) {
+import io.objectbox.annotation.Backlink
+import io.objectbox.annotation.Entity
+import io.objectbox.annotation.Id
+import io.objectbox.relation.ToMany
 
-    fun getBestTime(): Try? {
-        return tries.sortedWith(compareBy { it.value }).firstOrNull()
+/**
+ * A container holding a group of ABTests made.
+ *
+ * @param title title for the group of ABTests.
+ * @property ab the group of ABTests.
+ * @see AB
+ */
+@Entity
+data class ABTest(
+        @Id var id: Long = 0,
+        val title: String = "") {
+
+    @Backlink
+    lateinit var ab: ToMany<AB>
+
+    constructor(title: String, abList: List<AB>): this(0, title) {
+        abList.forEach { ab.add(it)}
+    }
+
+    fun getBestWay(): AB? {
+        return ab.filter {it.tries.isNotEmpty()}.sortedWith(compareBy{ it.getBestTime()?.value }).firstOrNull()
     }
 
 }
