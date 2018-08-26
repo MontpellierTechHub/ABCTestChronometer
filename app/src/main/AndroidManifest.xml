@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="fr.montpelliertechhub.abctestchronometer.MainActivity"
+            android:name="fr.montpelliertechhub.abctestchronometer.abtests.ABTestsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="fr.montpelliertechhub.abctestchronometer.road.RoadActivity"></activity>
+        <activity android:name="fr.montpelliertechhub.abctestchronometer.abtestdetail.ABTestDetailActivity"></activity>
         <activity android:name="fr.montpelliertechhub.abctestchronometer.measure.MeasureActivity"></activity>
     </application>
 
