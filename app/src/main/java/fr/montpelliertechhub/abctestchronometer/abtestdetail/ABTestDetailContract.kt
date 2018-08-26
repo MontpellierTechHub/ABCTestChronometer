@@ -12,7 +12,7 @@ import fr.montpelliertechhub.abctestchronometer.models.ABTest
  */
 interface ABTestDetailContract {
 
-    interface View: BaseView<Presenter> {
+    interface View : BaseView<Presenter> {
         var isActive: Boolean
         fun showResume(text: AB?)
         fun hideResume()
@@ -23,7 +23,7 @@ interface ABTestDetailContract {
         fun showABMeasure(ab: AB)
     }
 
-    interface  Presenter: BasePresenter {
+    interface Presenter : BasePresenter {
         fun editABTest()
         fun deleteABTest()
         fun openABTestMeasure(ab: AB)

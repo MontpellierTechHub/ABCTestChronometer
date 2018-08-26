@@ -11,7 +11,7 @@ import fr.montpelliertechhub.abctestchronometer.models.ABTest
  */
 interface ABTestsContract {
 
-    interface View: BaseView<Presenter> {
+    interface View : BaseView<Presenter> {
         var isActive: Boolean
         fun showABTests(abtests: List<ABTest>)
         fun showNoABTests()
@@ -19,7 +19,7 @@ interface ABTestsContract {
         fun showABTestDetails(abTest: ABTest)
     }
 
-    interface  Presenter: BasePresenter {
+    interface Presenter : BasePresenter {
         fun loadABTest(forceUpdate: Boolean)
         fun addNewABTest()
         fun openABTest(abTest: ABTest)

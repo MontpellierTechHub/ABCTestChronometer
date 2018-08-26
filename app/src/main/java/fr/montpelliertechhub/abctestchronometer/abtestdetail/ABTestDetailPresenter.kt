@@ -21,16 +21,16 @@ class ABTestDetailPresenter(private val abTestId: Long?,
     }
 
     override fun start() {
-        if(abTestId == null){
+        if (abTestId == null) {
             abTestDetailView.showMissingABTest()
             return
         }
-        abTestRepository.getABTest(abTestId, object: ABTestsDataSource.GetABTestCallback {
+        abTestRepository.getABTest(abTestId, object : ABTestsDataSource.GetABTestCallback {
             override fun onABTestsLoaded(abTest: ABTest) {
                 with(abTestDetailView) {
 
                     // The view may not be able to handle UI updates anymore
-                    if(!isActive) {
+                    if (!isActive) {
                         return@onABTestsLoaded
                     }
                 }
@@ -41,7 +41,7 @@ class ABTestDetailPresenter(private val abTestId: Long?,
                 with(abTestDetailView) {
 
                     // The view may not be able to handle UI updates anymore
-                    if(!isActive) {
+                    if (!isActive) {
                         return@onDataNotAvailable
                     }
                     showMissingABTest()
@@ -51,14 +51,14 @@ class ABTestDetailPresenter(private val abTestId: Long?,
     }
 
     override fun editABTest() {
-        if(abTestId == null) {
+        if (abTestId == null) {
             abTestDetailView.showMissingABTest()
             return
         }
     }
 
     override fun deleteABTest() {
-        if(abTestId == null) {
+        if (abTestId == null) {
             abTestDetailView.showMissingABTest()
             return
         }
@@ -67,7 +67,7 @@ class ABTestDetailPresenter(private val abTestId: Long?,
     }
 
     override fun openABTestMeasure(ab: AB) {
-        if(abTestId == null) {
+        if (abTestId == null) {
             abTestDetailView.showMissingABTest()
             return
         }
@@ -80,7 +80,7 @@ class ABTestDetailPresenter(private val abTestId: Long?,
 
     private fun showABTest(abTest: ABTest) {
         with(abTestDetailView) {
-            if(abTestId == null){
+            if (abTestId == null) {
                 hideResume()
             } else {
                 showResume(abTest.getBestWay())

@@ -36,7 +36,7 @@ class MeasureActivity : AppCompatActivity() {
 
         val abId = intent.getLongExtra(INTENT_AB_ID, -1)
 
-        ABTestRepository.getInstance(applicationContext).getAB(abId, object:ABTestsDataSource.GetABCallback {
+        ABTestRepository.getInstance(applicationContext).getAB(abId, object : ABTestsDataSource.GetABCallback {
             override fun onABLoaded(ab: AB) {
                 onABReceive(ab)
             }
@@ -48,14 +48,14 @@ class MeasureActivity : AppCompatActivity() {
 
     }
 
-    private fun onABReceive(ab: AB){
+    private fun onABReceive(ab: AB) {
         mAb = ab
 
         titleTextView.text = getString(R.string.title_activity_measure, mAb.from, mAb.to)
 
         mTimer = Timer(timerChronometer, getSharedPreferences("ChronometerSample", MODE_PRIVATE))
         val baseTime = mTimer.resumeState()
-        when(baseTime) {
+        when (baseTime) {
             is Some -> resumeTimer(baseTime.t)
         }
         timerButton.setOnClickListener {
@@ -65,7 +65,7 @@ class MeasureActivity : AppCompatActivity() {
                 resumeTimer(mTimer.startChronometer())
             }
         }
-        stopButton.setOnClickListener{
+        stopButton.setOnClickListener {
             mTimer.stopChronometer()
             chronometerView.stop()
             timerButton.setText(R.string.action_resume)
