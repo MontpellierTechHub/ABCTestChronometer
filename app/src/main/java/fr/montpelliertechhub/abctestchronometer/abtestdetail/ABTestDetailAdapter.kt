@@ -1,4 +1,4 @@
-package fr.montpelliertechhub.abctestchronometer.road
+package fr.montpelliertechhub.abctestchronometer.abtestdetail
 
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -10,12 +10,15 @@ import fr.montpelliertechhub.abctestchronometer.models.AB
 import fr.montpelliertechhub.abctestchronometer.models.ABTest
 import fr.montpelliertechhub.abctestchronometer.utils.inflate
 
-class RoadAdapter(val abTest: ABTest, val listener: (AB) -> Unit) : RecyclerView.Adapter<RoadAdapter.RoadViewHolder>() {
+// TODO : move string to res
+class RoadAdapter(private val listener: ABItemListener) : RecyclerView.Adapter<RoadAdapter.RoadViewHolder>() {
 
     val TAG: String = RoadAdapter::class.java.simpleName
 
     val ITEM_RESUME = 0
     val ITEM_DETAIL = 1
+
+    var abTest: ABTest? = null
 
     abstract class RoadViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         abstract fun bind()
@@ -48,21 +51,22 @@ class RoadAdapter(val abTest: ABTest, val listener: (AB) -> Unit) : RecyclerView
             // Nothing specific here
         }
 
-        fun bind(ab: AB, listener: (AB) -> Unit) {
+        fun bind(ab: AB, listener: ABItemListener) {
             bind()
             roadTextView.text = ab.title
             destinationTextView.text = "De " + ab.from + " jusqu'à " + ab.to
             triesTextView.text = ab.tries.size.toString() + " mesure(s)"
 
-            itemView.setOnClickListener { listener(ab) }
+            itemView.setOnClickListener { listener.onABClick(ab) }
         }
     }
 
     override fun onBindViewHolder(holder: RoadViewHolder, position: Int) {
+        if (abTest == null) return
         when (holder) {
-            is DetailRoadViewHolder -> holder.bind(abTest.ab[position - 1], listener)
-            is ResumeRoadViewHolder -> holder.bind(abTest.getBestWay())
-            else -> Log.w(TAG, "Case not managed /!\\")
+            is DetailRoadViewHolder -> holder.bind(abTest!!.ab[position - 1], listener)
+            is ResumeRoadViewHolder -> holder.bind(abTest!!.getBestWay())
+            else                    -> Log.w(TAG, "Case not managed /!\\")
         }
     }
 
@@ -70,15 +74,24 @@ class RoadAdapter(val abTest: ABTest, val listener: (AB) -> Unit) : RecyclerView
             when (viewType) {
                 ITEM_RESUME -> ResumeRoadViewHolder(parent inflate R.layout.road_resume_item)
                 ITEM_DETAIL -> DetailRoadViewHolder(parent inflate R.layout.road_item_view)
-                else -> throw IllegalStateException("Not managed view type")
+                else        -> throw IllegalStateException("Not managed view type")
             }
 
-    override fun getItemCount() = abTest.ab.size + 1
+    override fun getItemCount() = if (abTest == null) 0 else abTest!!.ab.size + 1
 
     override fun getItemViewType(position: Int): Int =
             when (position) {
-                0 -> ITEM_RESUME
+                0    -> ITEM_RESUME
                 else -> ITEM_DETAIL
             }
 
+    fun setData(data: ABTest) {
+        abTest = data
+        notifyDataSetChanged()
+    }
+}
+
+
+interface ABItemListener {
+    fun onABClick(clickedAB: AB)
 }

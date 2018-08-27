@@ -9,6 +9,7 @@ import arrow.core.Some
 import fr.montpelliertechhub.abctestchronometer.R
 import fr.montpelliertechhub.abctestchronometer.models.AB
 import fr.montpelliertechhub.abctestchronometer.repository.ABTestRepository
+import fr.montpelliertechhub.abctestchronometer.repository.ABTestsDataSource
 import fr.montpelliertechhub.abctestchronometer.utils.Timer
 import kotlinx.android.synthetic.main.activity_measure.*
 
@@ -17,13 +18,11 @@ class MeasureActivity : AppCompatActivity() {
 
     companion object {
 
-        private const val INTENT_ABTESTCONTAINER_POS: String = "intent_abtestcontainer_position"
-        private const val INTENT_ABTEST_POS: String = "intent_abtest_position"
+        private const val INTENT_AB_ID: String = "intent_ab_id"
 
-        fun onNewIntent(context: Context, containerPosition: Int, abTestPosition: Int): Intent {
+        fun onNewIntent(context: Context?, abId: Long): Intent {
             return Intent(context, MeasureActivity::class.java).apply {
-                putExtra(INTENT_ABTESTCONTAINER_POS, containerPosition)
-                putExtra(INTENT_ABTEST_POS, abTestPosition)
+                putExtra(INTENT_AB_ID, abId)
             }
         }
     }
@@ -35,16 +34,28 @@ class MeasureActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_measure)
 
-        val positionContainerPosition = intent.getIntExtra(INTENT_ABTESTCONTAINER_POS, -1)
-        val abTestPosition = intent.getIntExtra(INTENT_ABTEST_POS, -1)
+        val abId = intent.getLongExtra(INTENT_AB_ID, -1)
 
-        mAb = ABTestRepository.getInstance(applicationContext).getABTests()[positionContainerPosition].ab[abTestPosition]
+        ABTestRepository.getInstance(applicationContext).getAB(abId, object : ABTestsDataSource.GetABCallback {
+            override fun onABLoaded(ab: AB) {
+                onABReceive(ab)
+            }
+
+            override fun onDataNotAvailable() {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+
+    }
+
+    private fun onABReceive(ab: AB) {
+        mAb = ab
 
         titleTextView.text = getString(R.string.title_activity_measure, mAb.from, mAb.to)
 
         mTimer = Timer(timerChronometer, getSharedPreferences("ChronometerSample", MODE_PRIVATE))
         val baseTime = mTimer.resumeState()
-        when(baseTime) {
+        when (baseTime) {
             is Some -> resumeTimer(baseTime.t)
         }
         timerButton.setOnClickListener {
@@ -54,7 +65,7 @@ class MeasureActivity : AppCompatActivity() {
                 resumeTimer(mTimer.startChronometer())
             }
         }
-        stopButton.setOnClickListener{
+        stopButton.setOnClickListener {
             mTimer.stopChronometer()
             chronometerView.stop()
             timerButton.setText(R.string.action_resume)

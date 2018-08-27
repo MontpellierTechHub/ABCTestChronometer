@@ -12,12 +12,13 @@ import io.objectbox.kotlin.boxFor
 
 class ABTestRepository private constructor(context: Context) {
 
-    val boxStore: BoxStore
-    val mAbTestBox: Box<ABTest>
+    private val boxStore: BoxStore = MyObjectBox.builder().androidContext(context).build()
+    private val mAbTestBox: Box<ABTest>
+    private val mAbBox: Box<AB>
 
     init {
-        boxStore = MyObjectBox.builder().androidContext(context).build()
         mAbTestBox = boxStore.boxFor()
+        mAbBox = boxStore.boxFor()
 
         if(mAbTestBox.count() == 0L){
             mAbTestBox.put(ABTest(
@@ -73,12 +74,19 @@ class ABTestRepository private constructor(context: Context) {
 
     companion object : SingletonHolder<ABTestRepository, Context>(::ABTestRepository)
 
-    fun getABTests(): MutableList<ABTest> {
-        return mAbTestBox.all
+    fun getABTests(callbacks: ABTestsDataSource.LoadABTestsCallback) {
+        callbacks.onABTestsLoaded(mAbTestBox.all)
     }
 
-    fun newAbTestContainer(abTest: ABTest): Long {
-        return mAbTestBox.put(abTest)
+    fun getABTest(id: Long, callbacks: ABTestsDataSource.GetABTestCallback) {
+        callbacks.onABTestsLoaded(mAbTestBox.get(id))
     }
 
+    fun getAB(id: Long, callbacks: ABTestsDataSource.GetABCallback) {
+        callbacks.onABLoaded(mAbBox.get(id))
+    }
+
+    fun deleteABTest(abTestId: Long) {
+        mAbTestBox.remove(abTestId)
+    }
 }
